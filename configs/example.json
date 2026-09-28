@@ -1,0 +1,25 @@
+{
+  "version": "v1",
+  "flags": {
+    "new_checkout": {
+      "enabled": true,
+      "percentage": 50,
+      "include_audiences": ["staff"],
+      "exclude_audiences": ["blocked"],
+      "depends_on": ["feature_api_v2"],
+      "conflicts_with": ["legacy_checkout"]
+    },
+    "feature_api_v2": { "enabled": true, "percentage": 100 },
+    "legacy_checkout": {
+      "enabled": true,
+      "percentage": 0,
+      "include_audiences": ["legacy_users"],
+      "conflicts_with": ["new_checkout"]
+    }
+  },
+  "audiences": {
+    "staff":        { "conditions": [{ "attribute": "tier", "operator": "eq", "values": ["staff"] }] },
+    "blocked":      { "conditions": [{ "attribute": "blocked", "operator": "eq", "values": ["true"] }] },
+    "legacy_users": { "conditions": [{ "attribute": "tier", "operator": "eq", "values": ["legacy"] }] }
+  }
+}
