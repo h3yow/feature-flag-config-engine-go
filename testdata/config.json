@@ -1,0 +1,49 @@
+{
+  "version": "v1",
+  "segments": {
+    "internal-users": {
+      "name": "内部员工",
+      "user_ids": ["alice", "bob"]
+    },
+    "beta-plan": {
+      "name": "Beta 套餐用户",
+      "rules": [
+        { "attr": "plan", "op": "eq", "values": ["beta"] }
+      ]
+    }
+  },
+  "flags": [
+    {
+      "key": "new-checkout",
+      "description": "新版结算页",
+      "enabled": true,
+      "default": false,
+      "rollout": { "percentage": 50, "salt": "checkout-salt" },
+      "conflicts_with": ["old-checkout"]
+    },
+    {
+      "key": "old-checkout",
+      "enabled": true,
+      "default": true,
+      "conflicts_with": ["new-checkout"]
+    },
+    {
+      "key": "checkout-coupon",
+      "description": "结算页优惠券入口，依赖新版结算页",
+      "enabled": true,
+      "default": false,
+      "depends_on": ["new-checkout"],
+      "targeting": [
+        {
+          "name": "内部和 Beta 用户全开",
+          "match": { "any": [
+            { "segment": "internal-users" },
+            { "segment": "beta-plan" }
+          ]},
+          "serve": true
+        }
+      ],
+      "rollout": { "percentage": 10, "salt": "coupon-salt" }
+    }
+  ]
+}
